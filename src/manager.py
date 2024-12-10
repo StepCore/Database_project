@@ -1,4 +1,3 @@
-import psycopg2
 import requests
 
 
@@ -20,8 +19,8 @@ class DBManager:
             vacancies = response.json()["items"]
             for vacancy in vacancies:
                 if any(
-                        keyword.lower() in str(vacancy).lower()
-                        for keyword in keywords.split(" ")
+                    keyword.lower() in str(vacancy).lower()
+                    for keyword in keywords.split(" ")
                 ):
                     self.vacancies.append(vacancy)
             self.__params["page"] += 1
@@ -32,13 +31,12 @@ class DBManager:
         employer_count = {}
         self.load_vacancies(" ")
         for vacancy in self.vacancies:
-            employer_name = vacancy['employer']['name']
+            employer_name = vacancy["employer"]["name"]
             if employer_name in employer_count:
                 employer_count[employer_name] += 1
             else:
                 employer_count[employer_name] = 1
 
-        # Преобразуем словарь в список словарей
         result = [{employer: count} for employer, count in employer_count.items()]
         return result
 
@@ -48,16 +46,18 @@ class DBManager:
         self.load_vacancies(" ")
 
         currency_rates = {
-            'RUB': 1,
-            'KZT': 1 / 5.28,
-            'BYR': 1 / 0.034,
-            'USD': 99,
-            'EUR': 106,
-            'UZS': 1 / 129
+            "RUB": 1,
+            "KZT": 1 / 5.28,
+            "BYR": 1 / 0.034,
+            "USD": 99,
+            "EUR": 106,
+            "UZS": 1 / 129,
         }
 
         for vacancy in self.vacancies:
-            company_name = vacancy.get("employer", {}).get("name", "Неизвестная компания")
+            company_name = vacancy.get("employer", {}).get(
+                "name", "Неизвестная компания"
+            )
             job_title = vacancy.get("name", "Без названия")
             salary = "Не указана"
             salary_info = vacancy.get("salary")
@@ -66,19 +66,27 @@ class DBManager:
                 salary_to = salary_info.get("to") or 0
                 currency = salary_info.get("currency", "RUB")
 
-                salary_from = round(float(salary_from) * currency_rates.get(currency, 1))
+                salary_from = round(
+                    float(salary_from) * currency_rates.get(currency, 1)
+                )
                 salary_to = round(float(salary_to) * currency_rates.get(currency, 1))
 
-                salary = f"{salary_from} - {salary_to} RUB" if salary_from != "Не указана" else "Не указана"
+                salary = (
+                    f"{salary_from} - {salary_to} RUB"
+                    if salary_from != "Не указана"
+                    else "Не указана"
+                )
 
             vacancy_url = vacancy.get("alternate_url", "Нет ссылки")
 
-            all_vacancies.append({
-                "company": company_name,
-                "vacancy_name": job_title,
-                "salary": salary,
-                "vacancy_url": vacancy_url
-            })
+            all_vacancies.append(
+                {
+                    "company": company_name,
+                    "vacancy_name": job_title,
+                    "salary": salary,
+                    "vacancy_url": vacancy_url,
+                }
+            )
 
         return all_vacancies
 
@@ -88,14 +96,13 @@ class DBManager:
         count = 0
         self.load_vacancies(" ")
 
-        # Словарь с курсами валют к RUB
         currency_rates = {
-            'RUB': 1,
-            'KZT': 1 / 5.28,
-            'BYR': 1 / 0.034,
-            'USD': 99,
-            'EUR': 106,
-            'UZS': 1 / 129
+            "RUB": 1,
+            "KZT": 1 / 5.28,
+            "BYR": 1 / 0.034,
+            "USD": 99,
+            "EUR": 106,
+            "UZS": 1 / 129,
         }
 
         for vacancy in self.vacancies:
@@ -124,23 +131,29 @@ class DBManager:
         vacancies_list = db_manager.get_all_vacancies()
         all_salaries = []
 
-        # Сбор всех зарплат для расчета средней
         for vacancy in vacancies_list:
-            salary_str = vacancy.get('salary')
+            salary_str = vacancy.get("salary")
 
-            if salary_str != 'Не указана':
+            if salary_str != "Не указана":
                 # Извлекаем минимальную и максимальную зарплату
-                salary_parts = salary_str.split(' - ')
+                salary_parts = salary_str.split(" - ")
                 # Удаляем ' RUB' и преобразуем в float
-                min_salary = float(salary_parts[0].replace(' RUB', '').replace(' ', '')) if salary_parts[0] != '0' else 0
-                max_salary = float(salary_parts[1].replace(' RUB', '').replace(' ', '')) if salary_parts[1] != '0' else 0
+                min_salary = (
+                    float(salary_parts[0].replace(" RUB", "").replace(" ", ""))
+                    if salary_parts[0] != "0"
+                    else 0
+                )
+                max_salary = (
+                    float(salary_parts[1].replace(" RUB", "").replace(" ", ""))
+                    if salary_parts[1] != "0"
+                    else 0
+                )
 
                 if min_salary > 0 or max_salary > 0:
                     # Если обе зарплаты не равны нулю, добавляем среднюю
                     salary_avg = (min_salary + max_salary) / 2
                     all_salaries.append(salary_avg)
 
-        # Рассчитываем среднюю зарплату по всем вакансиям
         if not all_salaries:
             return []
 
@@ -149,17 +162,29 @@ class DBManager:
         # Собираем вакансии с зарплатой выше средней
         higher_salary_vacancies = []
         for vacancy in vacancies_list:
-            salary_str = vacancy.get('salary')
+            salary_str = vacancy.get("salary")
 
-            if salary_str != 'Не указана':
-                salary_parts = salary_str.split(' - ')
-                min_salary = float(salary_parts[0].replace(' RUB', '').replace(' ', '')) if salary_parts[0] != '0' else 0
-                max_salary = float(salary_parts[1].replace(' RUB', '').replace(' ', '')) if salary_parts[1] != '0' else 0
+            if salary_str != "Не указана":
+                salary_parts = salary_str.split(" - ")
+                min_salary = (
+                    float(salary_parts[0].replace(" RUB", "").replace(" ", ""))
+                    if salary_parts[0] != "0"
+                    else 0
+                )
+                max_salary = (
+                    float(salary_parts[1].replace(" RUB", "").replace(" ", ""))
+                    if salary_parts[1] != "0"
+                    else 0
+                )
 
                 if min_salary > avg_salary or max_salary > avg_salary:
                     higher_salary_vacancies.append(vacancy)
 
         return higher_salary_vacancies
+
+    def vacancies_with_keyword(self, keyword):
+        """Функция для получения вакансий по ключевому слову"""
+        return self.load_vacancies(keyword)
 
 
 db_manager = DBManager()
@@ -167,6 +192,6 @@ list_and_count_vacancies = db_manager.get_companies_and_vacancies_count()
 vacancies_list = db_manager.get_all_vacancies()
 avg_salary = db_manager.get_avg_salary()
 higher_salary_vacancy = db_manager.get_vacancies_with_higher_salary()
-vacancies_with_keyword = DBManager().load_vacancies("Тюмень")
+vacancies_keyword = db_manager.vacancies_with_keyword("your_text")
 
-# print(*vacancies_with_keyword, sep='\n')
+# print(*vacancies_list, sep='\n')
