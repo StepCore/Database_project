@@ -22,7 +22,7 @@ def main():
         host='localhost',
         database='postgres',
         user='postgres',
-        password='StepWinGame7'
+        password='ZeliBobka789'
     )
 
     cur = conn.cursor()
