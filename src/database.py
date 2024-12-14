@@ -34,14 +34,26 @@ def insert_vacancy(cur, vacancy):
     )
 
 
-def main():
+def connection(keywords):
+    """Подключение к БД и вставка данных в таблицу"""
+
     conn = psycopg2.connect(
         host="localhost", database="postgres", user="postgres", password="ZeliBobka789"
     )
 
     cur = conn.cursor()
+    cur.execute("DROP TABLE IF EXISTS vacancy_table")
+    cur.execute(
+        "CREATE TABLE vacancy_table ("
+        "vacancy_id SERIAL PRIMARY KEY,"
+        "vacancy_name VARCHAR(255),"
+        "vacancy_locate VARCHAR(255),"
+        "salary NUMERIC(10, 2),"
+        "employer VARCHAR(255),"
+        "experience VARCHAR(100))"
+    )
 
-    vacancies = DBManager().vacancies_with_keyword("python")
+    vacancies = DBManager().vacancies_with_keyword(keywords)
 
     for vacancy in vacancies:
         insert_vacancy(cur, vacancy)
@@ -56,7 +68,4 @@ def main():
 
     cur.close()
     conn.close()
-
-
-if __name__ == "__main__":
-    main()
+    return "Список вакансий сохранен в базе данных"

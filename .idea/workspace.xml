@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c38333f1-7df6-464d-8098-2534651d7bee" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Database_SQL.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/database.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/manager.py" afterDir="false" />
+    <list default="true" id="c38333f1-7df6-464d-8098-2534651d7bee" name="Changes" comment="create vacancies_with_keyword, fix database.py and use black and isort">
+      <change afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/database.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +22,16 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -41,16 +44,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.database.executor&quot;: &quot;Run&quot;,
-    &quot;Python.manager.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/PycharmProjects/Vacancy application&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.database.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.manager.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "develop",
+    "last_opened_file_path": "C:/Users/User/PycharmProjects/Vacancy application"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="database" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Database_SQL" />
@@ -77,6 +81,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.database" />
+        <item itemvalue="Python.database" />
+        <item itemvalue="Python.database" />
+        <item itemvalue="Python.database" />
       </list>
     </recent_temporary>
   </component>
@@ -96,6 +103,37 @@
       <option name="presentableId" value="Default" />
       <updated>1730048905091</updated>
     </task>
+    <task id="LOCAL-00001" summary="create all func in database.py and manager.py">
+      <option name="closed" value="true" />
+      <created>1733844154036</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1733844154036</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fix func">
+      <option name="closed" value="true" />
+      <created>1733850108832</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1733850108832</updated>
+    </task>
+    <task id="LOCAL-00003" summary="create vacancies_with_keyword, fix database.py and use black and isort">
+      <option name="closed" value="true" />
+      <created>1733853355043</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1733853355043</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="create all func in database.py and manager.py" />
+    <MESSAGE value="fix func" />
+    <MESSAGE value="create vacancies_with_keyword, fix database.py and use black and isort" />
+    <option name="LAST_COMMIT_MESSAGE" value="create vacancies_with_keyword, fix database.py and use black and isort" />
   </component>
 </project>
