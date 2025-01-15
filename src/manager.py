@@ -192,6 +192,6 @@ list_and_count_vacancies = db_manager.get_companies_and_vacancies_count()
 vacancies_list = db_manager.get_all_vacancies()
 avg_salary = db_manager.get_avg_salary()
 higher_salary_vacancy = db_manager.get_vacancies_with_higher_salary()
-vacancies_keyword = db_manager.vacancies_with_keyword("your_text")
+vacancies_keyword = db_manager.vacancies_with_keyword("Тюмень")
 
-# print(*vacancies_list, sep='\n')
+# print(*vacancies_keyword, sep='\n')

@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c38333f1-7df6-464d-8098-2534651d7bee" name="Changes" comment="create vacancies_with_keyword, fix database.py and use black and isort">
-      <change afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+    <list default="true" id="c38333f1-7df6-464d-8098-2534651d7bee" name="Changes" comment="create main.py and fix database.py">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,17 +43,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.database.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.manager.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "develop",
-    "last_opened_file_path": "C:/Users/User/PycharmProjects/Vacancy application"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.database.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.manager.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/PycharmProjects/Vacancy application&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="database" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Database_SQL" />
@@ -127,13 +126,22 @@
       <option name="project" value="LOCAL" />
       <updated>1733853355043</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="create main.py and fix database.py">
+      <option name="closed" value="true" />
+      <created>1734195823798</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1734195823798</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create all func in database.py and manager.py" />
     <MESSAGE value="fix func" />
     <MESSAGE value="create vacancies_with_keyword, fix database.py and use black and isort" />
-    <option name="LAST_COMMIT_MESSAGE" value="create vacancies_with_keyword, fix database.py and use black and isort" />
+    <MESSAGE value="create main.py and fix database.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="create main.py and fix database.py" />
   </component>
 </project>
