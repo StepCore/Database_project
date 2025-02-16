@@ -1,6 +1,18 @@
-from src.database import connection_vacancy, connection_employer
-from src.manager import (avg_salary, higher_salary_vacancy,
-                         list_and_count_vacancies, vacancies_list)
+import os
+
+from dotenv import load_dotenv
+
+from src.database import Database
+from src.manager import DBManager, get_vacancies
+
+load_dotenv(override=True)
+db = Database()
+manager = DBManager(
+    dbname=os.getenv("DB"),
+    user=os.getenv("USER"),
+    password=os.getenv("PASSWORD"),
+    host=os.getenv("HOST"),
+)
 
 
 def main():
@@ -15,16 +27,30 @@ def main():
     )
     if user_input == "1":
         user_input = input("Введите слова для поиска: ")
-        connection_employer(user_input)
-        return connection_vacancy(user_input)
+        vacancies = get_vacancies(user_input)
+        db.save_data(vacancies)
+        db.close()
+        return vacancies
     if user_input == "2":
-        return list_and_count_vacancies
+        vacancies = get_vacancies("")
+        db.save_data(vacancies)
+        db.close()
+        return manager.get_companies_and_vacancies_count()
     if user_input == "3":
-        return vacancies_list
+        vacancies = get_vacancies("")
+        db.save_data(vacancies)
+        db.close()
+        return manager.get_all_vacancies()
     if user_input == "4":
-        return avg_salary
+        vacancies = get_vacancies("")
+        db.save_data(vacancies)
+        db.close()
+        return manager.get_avg_salary()
     if user_input == "5":
-        return higher_salary_vacancy
+        vacancies = get_vacancies("")
+        db.save_data(vacancies)
+        db.close()
+        return manager.get_vacancies_with_higher_salary()
 
 
 print(main())

@@ -1,131 +1,112 @@
+import os
+from typing import Dict, List, Optional
+
 import psycopg2
+from dotenv import load_dotenv
 
-from src.manager import DBManager
-
-
-def insert_vacancy(cur, vacancy):
-    """Основная функция заполняющая таблицу vacancy_table"""
-    vacancy_id = vacancy["id"]
-    vacancy_name = vacancy["name"]
-    vacancy_locate = vacancy["area"]["name"] if vacancy["area"] else None
-    salary = (
-        vacancy["salary"]["from"]
-        if vacancy["salary"] and "from" in vacancy["salary"]
-        else None
-    )
-    employer = vacancy["employer"]["id"] if vacancy["employer"] else None
-    experience = vacancy["experience"]["name"] if vacancy["experience"] else None
-
-    # Проверка, существует ли уже такая вакансия в базе
-    cur.execute(
-        "SELECT COUNT(*) FROM vacancy_table WHERE vacancy_id = %s", (vacancy_id,)
-    )
-    if cur.fetchone()[0] > 0:
-        # Если вакансия уже существует, пропустить вставку
-        return
-
-    # Выполнение SQL-запроса на вставку
-    cur.execute(
-        """
-        INSERT INTO vacancy_table (vacancy_id, vacancy_name, vacancy_locate, salary, employer_id, experience)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """,
-        (vacancy_id, vacancy_name, vacancy_locate, salary, employer, experience),
-    )
+load_dotenv(override=True)
+# Константа для конвертации валют
+CURRENCY_RATES = {
+    "RUB": 1,  # Российский рубль (базовая валюта)
+    "KZT": 0.19,  # Казахстанский тенге
+    "BYR": 29.41,  # Белорусский рубль (устаревший, сейчас BYN)
+    "USD": 0.0101,  # Доллар США
+    "EUR": 0.0094,  # Евро
+    "UZS": 0.0078,  # Узбекский сум
+}
 
 
-def insert_employer(cur, vacancy):
-    """Основная функция заполняющая таблицу employer_table"""
-    employer_id = vacancy["employer"]["id"] if vacancy["employer"] else None
-    employer_name = vacancy["employer"]["name"]
-    employer_url = vacancy["employer"]["alternate_url"]
-    vacancy_url = vacancy["alternate_url"]
+class Database:
+    """Класс для подключения к базе данных и вставки данных."""
 
-    # Проверка, существует ли уже такая вакансия в базе
-    cur.execute(
-        "SELECT COUNT(*) FROM employer_table WHERE employer_id = %s", (employer_id,)
-    )
-    if cur.fetchone()[0] > 0:
-        # Если вакансия уже существует, пропустить вставку
-        return
+    def __init__(self):
+        """Инициализация подключения к базе данных."""
+        self.conn = psycopg2.connect(
+            host=os.getenv("HOST"),
+            database=os.getenv("DB"),
+            user=os.getenv("USER"),
+            password=os.getenv("PASSWORD"),
+        )
+        self._init_schema()
 
-    # Выполнение SQL-запроса на вставку
-    cur.execute(
-        """
-        INSERT INTO employer_table (employer_id, employer_name, employer_url, vacancy_url)
-        VALUES (%s, %s, %s, %s)
-    """,
-        (employer_id, employer_name, employer_url, vacancy_url),
-    )
+    def _init_schema(self):
+        """Создание таблиц, если они не существуют."""
+        with self.conn.cursor() as cur:
+            cur.execute("DROP TABLE IF EXISTS vacancy_table")
+            cur.execute("DROP TABLE IF EXISTS employer_table")
+            cur.execute(
+                """
+                CREATE TABLE employer_table (
+                    employer_id TEXT PRIMARY KEY,
+                    employer_name TEXT,
+                    employer_url TEXT,
+                    vacancy_url TEXT
+                );
+                CREATE TABLE vacancy_table (
+                    vacancy_id TEXT PRIMARY KEY,
+                    vacancy_name TEXT,
+                    vacancy_locate TEXT,
+                    salary NUMERIC,
+                    employer_id TEXT REFERENCES employer_table(employer_id),
+                    experience TEXT
+                );
+            """
+            )
+            self.conn.commit()
 
+    def save_data(self, vacancies: List[Dict]):
+        """Сохранение данных о вакансиях и работодателях в базу данных."""
+        with self.conn.cursor() as cur:
+            for vacancy in vacancies:
+                # Сохранение работодателя
+                if vacancy.get("employer"):
+                    cur.execute(
+                        """
+                        INSERT INTO employer_table (employer_id, employer_name, employer_url, vacancy_url)
+                        VALUES (%s, %s, %s, %s)
+                        ON CONFLICT (employer_id) DO NOTHING
+                    """,
+                        (
+                            vacancy["employer"]["id"],
+                            vacancy["employer"]["name"],
+                            vacancy["employer"]["alternate_url"],
+                            vacancy["alternate_url"],
+                        ),
+                    )
 
-def connection_vacancy(keywords):
-    """Создание БД vacancy_table и вставка данных в таблицу"""
+                # Сохранение вакансии
+                salary = self._convert_salary(vacancy.get("salary"))
+                cur.execute(
+                    """
+                    INSERT INTO vacancy_table (vacancy_id, vacancy_name, vacancy_locate, salary, employer_id, experience)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (vacancy_id) DO NOTHING
+                """,
+                    (
+                        vacancy["id"],
+                        vacancy["name"],
+                        vacancy["area"]["name"] if vacancy.get("area") else None,
+                        salary,
+                        vacancy["employer"]["id"] if vacancy.get("employer") else None,
+                        (
+                            vacancy["experience"]["name"]
+                            if vacancy.get("experience")
+                            else None
+                        ),
+                    ),
+                )
+            self.conn.commit()
 
-    conn = psycopg2.connect(
-        host="localhost", database="postgres", user="postgres", password="ZeliBobka789"
-    )
+    def _convert_salary(self, salary: Optional[Dict]) -> float:
+        """Конвертация зарплаты в рубли."""
+        if not salary:
+            return 0
+        from_s = salary.get("from", 0) or 0
+        to_s = salary.get("to", 0) or 0
+        currency = salary.get("currency", "RUB")
+        avg = (float(from_s) + float(to_s)) / 2
+        return avg * CURRENCY_RATES.get(currency, 1)
 
-    cur = conn.cursor()
-    cur.execute("DROP TABLE IF EXISTS vacancy_table")
-    cur.execute(
-        "CREATE TABLE vacancy_table ("
-        "vacancy_id SERIAL PRIMARY KEY,"
-        "vacancy_name VARCHAR(255),"
-        "vacancy_locate VARCHAR(255),"
-        "salary NUMERIC(10, 2),"
-        "employer_id NUMERIC,"
-        "experience VARCHAR(100))"
-    )
-
-    vacancies = DBManager().vacancies_with_keyword(keywords)
-
-    for vacancy in vacancies:
-        insert_vacancy(cur, vacancy)
-
-    conn.commit()
-
-    # Проверка, что вакансии были добавлены
-    cur.execute("SELECT * FROM vacancy_table")
-    rows = cur.fetchall()
-    for row in rows:
-        print(row)
-
-    cur.close()
-    conn.close()
-    return "Список вакансий сохранен в базе данных"
-
-
-def connection_employer(keywords):
-    """Создание БД employer_table и вставка данных в таблицу"""
-
-    conn = psycopg2.connect(
-        host="localhost", database="postgres", user="postgres", password="ZeliBobka789"
-    )
-
-    cur = conn.cursor()
-    cur.execute("DROP TABLE IF EXISTS employer_table")
-    cur.execute(
-        "CREATE TABLE employer_table ("
-        "employer_id SERIAL PRIMARY KEY,"
-        "employer_name VARCHAR(255),"
-        "employer_url VARCHAR(255),"
-        "vacancy_url VARCHAR(100))"
-    )
-
-    vacancies = DBManager().vacancies_with_keyword(keywords)
-
-    for vacancy in vacancies:
-        insert_employer(cur, vacancy)
-
-    conn.commit()
-
-    # Проверка, что вакансии были добавлены
-    cur.execute("SELECT * FROM employer_table")
-    rows = cur.fetchall()
-    for row in rows:
-        print(row)
-
-    cur.close()
-    conn.close()
-    return "Список вакансий сохранен в базе данных"
+    def close(self):
+        """Закрытие соединения с базой данных."""
+        self.conn.close()
