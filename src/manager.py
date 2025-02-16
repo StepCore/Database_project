@@ -1,19 +1,34 @@
+from abc import ABC, abstractmethod
 from typing import Dict, List
 
 import psycopg2
-import requests
 
 
-def get_vacancies(keyword: str) -> List[Dict]:
-    url = "https://api.hh.ru/vacancies"
-    params = {"text": keyword, "per_page": 100}
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        return response.json().get("items", [])
-    return []
+class IDBManager(ABC):
+    """Абстрактный класс для работы с данными в базе данных."""
+
+    @abstractmethod
+    def get_companies_and_vacancies_count(self) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def get_all_vacancies(self) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def get_avg_salary(self) -> float:
+        pass
+
+    @abstractmethod
+    def get_vacancies_with_higher_salary(self) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def get_vacancies_with_keyword(self, keyword: str) -> List[Dict]:
+        pass
 
 
-class DBManager:
+class DBManager(IDBManager):
     """Класс для работы с данными в базе данных PostgreSQL."""
 
     def __init__(self, dbname: str, user: str, password: str, host: str):
@@ -108,6 +123,6 @@ class DBManager:
                 for row in cur.fetchall()
             ]
 
-    def close(self):
+    def close(self) -> None:
         """Закрытие соединения с базой данных."""
         self.conn.close()

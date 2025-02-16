@@ -1,4 +1,5 @@
 import os
+from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
 import psycopg2
@@ -16,7 +17,19 @@ CURRENCY_RATES = {
 }
 
 
-class Database:
+class IDatabase(ABC):
+    """Абстрактный класс для работы с базой данных."""
+
+    @abstractmethod
+    def save_data(self, vacancies: List[Dict]) -> None:
+        pass
+
+    @abstractmethod
+    def close(self) -> None:
+        pass
+
+
+class Database(IDatabase):
     """Класс для подключения к базе данных и вставки данных."""
 
     def __init__(self):
@@ -54,11 +67,10 @@ class Database:
             )
             self.conn.commit()
 
-    def save_data(self, vacancies: List[Dict]):
+    def save_data(self, vacancies: List[Dict]) -> None:
         """Сохранение данных о вакансиях и работодателях в базу данных."""
         with self.conn.cursor() as cur:
             for vacancy in vacancies:
-                # Сохранение работодателя
                 if vacancy.get("employer"):
                     cur.execute(
                         """
@@ -74,8 +86,7 @@ class Database:
                         ),
                     )
 
-                # Сохранение вакансии
-                salary = self._convert_salary(vacancy.get("salary"))
+                salary = self.convert_salary(vacancy.get("salary"))
                 cur.execute(
                     """
                     INSERT INTO vacancy_table (vacancy_id, vacancy_name, vacancy_locate, salary, employer_id, experience)
@@ -97,7 +108,7 @@ class Database:
                 )
             self.conn.commit()
 
-    def _convert_salary(self, salary: Optional[Dict]) -> float:
+    def convert_salary(self, salary: Optional[Dict]) -> float:
         """Конвертация зарплаты в рубли."""
         if not salary:
             return 0
@@ -107,6 +118,6 @@ class Database:
         avg = (float(from_s) + float(to_s)) / 2
         return avg * CURRENCY_RATES.get(currency, 1)
 
-    def close(self):
+    def close(self) -> None:
         """Закрытие соединения с базой данных."""
         self.conn.close()
